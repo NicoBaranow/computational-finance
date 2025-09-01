@@ -32,7 +32,7 @@ Una vez hecho todo esto, podemos arrancar.
 
 ## Punto 1 - Implementación base
 
-Dados unos weights, retornos esperados, matriz de convarianzas y risk free rate, calculamos el ratio de Sharpe.
+Dados unos weights, retornos esperados, matriz de covarianzas y risk free rate, calculamos el ratio de Sharpe.
 
 ```python
 sharpeRatio = sharpeRatio(config["initialWeights"],
@@ -111,7 +111,7 @@ plot_results = plotSharpeOptimization(config["initialWeights"],
 El único parámetro nuevo que tenemos ahora es:
 - `resolution`: indica el tamaño de la grilla para hacer el plot, mejorando la resolución.    
 
-Esta función, además de graficar en 3D todas las combianciones de activos posibles y su ratio de Sharpe correspondiente, nos devuelve la información alcanzada luego de la maximización.
+Esta función, además de graficar en 3D todas las combinaciones de activos posibles y su ratio de Sharpe correspondiente, nos devuelve la información alcanzada luego de la maximización.
 
 ## Resultados alcanzados
 ### Punto 1
@@ -225,7 +225,7 @@ Weights Sum Verification: 1.00000000
 ```
 
 ### Punto 3
-Para la siguiente lista de stocks y weights, maximizamos el ratio de Sharpe modificando los weights, permitiendo short-selling.
+Para la siguiente lista de stocks y weights, maximizamos el ratio de Sharpe modificando los weights, sin permitir short-selling.
 
 ```python
 config = {
@@ -308,7 +308,7 @@ Optimal Weights: [0.18428182 0.75785531 0.05786288]
 Optimal Sharpe Ratio: 0.244720
 Weights Sum Verification: 1.00000000
 ```
-![alt text](images/sharpeRatio.png "Sharpe ratio surface with optimizacion trajectory") 
+![alt text](images/sharpeRatio.png "Sharpe ratio surface with optimization trajectory") 
 
 
 ## Consideraciones 
@@ -354,7 +354,7 @@ Optimal Sharpe Ratio: 0.089696
 Weights Sum Verification: 1.00000000
 ```
 
-![alt text](images/sharpeRatioError.png "Sharpe ratio surface with optimizacion trajectory") 
+![alt text](images/sharpeRatioError.png "Sharpe ratio surface with optimization trajectory") 
 
 - La sumatoria de `initialWeights` tiene que ser distinto de 0, para evitar errores al normalizar.
 
