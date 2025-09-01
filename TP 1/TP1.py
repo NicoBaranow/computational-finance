@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 config = {
-    "stocks": ["AAPL", "MSFT", "GOOG"], #List of stocks on the portafolio. 
-    "initialWeights": np.array([0.1, 0.6, -0.1]), #Weight of every stock on the portfolio. Numpy array
-    "riskFreeRate": 0.0025 #monthly risk-free rate, as expected returns are also monthly
+    "stocks": ["AAPL", "MSFT", "TSLA"], #List of stocks on the portafolio. 
+    "initialWeights": np.array([0.1, 0.2]), #Weight of every stock on the portfolio. Numpy array
+    "riskFreeRate": 0.03 #monthly risk-free rate, as expected returns are also monthly
 }
 
 def sharpeRatio (weights, expected_returns, cov_matrix, rf = 0):
@@ -75,13 +75,16 @@ def maxSharpeRatio (weights, expected_returns, cov_matrix, rf = 0, learning_rate
         "weights_history": weights_history
     }
 
-def plotSharpeOptimization(init_weights, expected_returns, cov_matrix, rf=0, resolution=100, allow_short = False):
-    
+def plotSharpeOptimization(init_weights, expected_returns, cov_matrix, rf = 0, learning_rate = 0.0001, max_iterations = 10000000, tolerance = 1e-9, allow_short = False, resolution = 100):
+
+    if len(init_weights) != 3:
+        raise ValueError("Initial weights must be a 3-element array.")
+
     # Normalize initial weights to sum to 1
     init_weights_norm = init_weights / np.sum(init_weights)
     
     # Run optimization algorithm
-    results = maxSharpeRatio(init_weights_norm, expected_returns, cov_matrix, rf, learning_rate=0.0001, max_iterations=10000000, tolerance=1e-9, allow_short=allow_short)
+    results = maxSharpeRatio(init_weights_norm, expected_returns, cov_matrix, rf, learning_rate=learning_rate, max_iterations=max_iterations, tolerance=tolerance, allow_short=allow_short)
 
     # Extract optimization trajectory
     trajectory = np.array(results["weights_history"])
@@ -178,12 +181,6 @@ def plotSharpeOptimization(init_weights, expected_returns, cov_matrix, rf=0, res
     plt.tight_layout()
     plt.show()
     
-    print(f"Optimal Sharpe Ratio: {results['optimal_sharpe']}")
-    print(f"Convergence Iterations: {results['iterations']}")
-    print(f"Initial Weights: {init_weights}")
-    print(f"Optimal Weights: {results['optimal_weights']}")
-    print(f"Weights Sum Verification: {np.sum(results['optimal_weights']):.8f}")
-    
     return results
 
 
@@ -198,9 +195,39 @@ cov_matrix = returns.cov().to_numpy()
 
 
 
-# maxSharpe = maxSharpeRatio(config["initialWeights"], expected_returns, cov_matrix, config["riskFreeRate"], learning_rate=0.0001, max_iterations=1000000, tolerance=1e-9, allow_short=True)
-# print("Initial weights:", config["initialWeights"])
-# print("Max Sharpe Ratio Optimization Result:", maxSharpe["optimal_sharpe"])
-# print("Optimal Weights:", maxSharpe["optimal_weights"])
-# print("Iterations:", maxSharpe["iterations"])
-plotSharpeOptimization(config["initialWeights"], expected_returns, cov_matrix, config["riskFreeRate"], resolution=100, allow_short=True )
+
+# gradient = sharpeRatioGradient(config["initialWeights"],
+#                                expected_returns,
+#                                cov_matrix,
+#                                config["riskFreeRate"],
+#                                error=1e-9)
+
+# max_sharpe = maxSharpeRatio(config["initialWeights"],
+#                            expected_returns,
+#                            cov_matrix,
+#                            config["riskFreeRate"],
+#                            learning_rate=0.0001,
+#                            max_iterations=1000000,
+#                            tolerance=1e-9,
+#                            allow_short=False)
+
+sharpe_ratio = sharpeRatio(config["initialWeights"],
+                          expected_returns,
+                          cov_matrix,
+                          config["riskFreeRate"])
+
+plot_results = plotSharpeOptimization(config["initialWeights"],
+                       expected_returns,
+                       cov_matrix, 
+                       config["riskFreeRate"],
+                       learning_rate=0.0001,
+                       max_iterations=10000000,
+                       tolerance=1e-9,
+                       allow_short=True,
+                       resolution=100)
+
+print("Initial Weights: ", config["initialWeights"])
+print(f"Initial Sharpe Ratio: {sharpe_ratio:.6f}")
+print(f"Optimal Weights: {plot_results['optimal_weights']}")
+print(f"Optimal Sharpe Ratio: {plot_results['optimal_sharpe']:.6f}")
+print(f"Weights Sum Verification: {np.sum(plot_results['optimal_weights']):.8f}")
