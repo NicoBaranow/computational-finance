@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 config = {
-    "stocks": ["AAPL", "MSFT", "TSLA"], #List of stocks on the portafolio. 
-    "initialWeights": np.array([0.1, 0.2]), #Weight of every stock on the portfolio. Numpy array
-    "riskFreeRate": 0.03 #monthly risk-free rate, as expected returns are also monthly
+    "stocks": ["AAPL", "MSFT", "GGAL"], #List of stocks on the portafolio. 
+    "initialWeights": np.array([1, 3]), #Weight of every stock on the portfolio. Numpy array
+    "riskFreeRate": 0.001 #monthly risk-free rate, as expected returns are also monthly
 }
 
 def sharpeRatio (weights, expected_returns, cov_matrix, rf = 0):
@@ -187,8 +187,11 @@ def plotSharpeOptimization(init_weights, expected_returns, cov_matrix, rf = 0, l
 if len(config["initialWeights"]) == len(config["stocks"])-1 :
    config["initialWeights"] = np.append(config["initialWeights"], 1 - np.sum(config["initialWeights"]))
 
-precios = yf.download(config["stocks"], period="5y", interval="1mo") #Download 5 years of monthly data for the stocks on the config
-returns = precios['Close'].pct_change()[1:] #Monthly returns 
+precios = yf.download(config["stocks"], period="2y", interval="1h") #Download 5 years of 30min data for the stocks on the config
+returns = precios['Close'].pct_change()[1:] #30min returns
+
+print(precios)
+
 
 expected_returns = returns.mean().to_numpy() #Expected monthly return based on 5y history
 cov_matrix = returns.cov().to_numpy()
@@ -207,27 +210,26 @@ cov_matrix = returns.cov().to_numpy()
 #                            cov_matrix,
 #                            config["riskFreeRate"],
 #                            learning_rate=0.0001,
-#                            max_iterations=1000000,
+#                            max_iterations=100000,
 #                            tolerance=1e-9,
 #                            allow_short=False)
 
-sharpe_ratio = sharpeRatio(config["initialWeights"],
-                          expected_returns,
-                          cov_matrix,
-                          config["riskFreeRate"])
+# sharpe_ratio = sharpeRatio(config["initialWeights"],
+#                           expected_returns,
+#                           cov_matrix,
+#                           config["riskFreeRate"])
 
 plot_results = plotSharpeOptimization(config["initialWeights"],
                        expected_returns,
                        cov_matrix, 
                        config["riskFreeRate"],
                        learning_rate=0.0001,
-                       max_iterations=10000000,
+                       max_iterations=100000,
                        tolerance=1e-9,
                        allow_short=True,
                        resolution=100)
 
 print("Initial Weights: ", config["initialWeights"])
-print(f"Initial Sharpe Ratio: {sharpe_ratio:.6f}")
 print(f"Optimal Weights: {plot_results['optimal_weights']}")
 print(f"Optimal Sharpe Ratio: {plot_results['optimal_sharpe']:.6f}")
 print(f"Weights Sum Verification: {np.sum(plot_results['optimal_weights']):.8f}")
