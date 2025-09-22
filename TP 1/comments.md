@@ -358,4 +358,4 @@ Weights Sum Verification: 1.00000000
 
 - La sumatoria de `initialWeights` tiene que ser distinto de 0, para evitar errores al normalizar.
 
-- Tanto en `sharpeRatio()`, como en`maxSharpeRatio()` y como en `plotSharpeOptimization()` recurrimos a la normalización para asegurarnos que $ \sum_{i=1}^{N} w_i = 1 $. 
+- Tanto en `sharpeRatio()`, como en`maxSharpeRatio()` y como en `plotSharpeOptimization()` recurrimos a la normalización para asegurarnos que $\sum_{i=1}^{N} w_i = 1$. 
